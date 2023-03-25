@@ -30,7 +30,7 @@ setup(
         "beautifulsoup4<=4.9.3",
         "tenacity<=6.3.1",
         "ratelimit<=2.2.1",
-        "playwright==1.31.1",
+        #"playwright==1.31.1",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
