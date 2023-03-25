@@ -74,7 +74,7 @@ class BCHydroApi2:
     async def authenticate(self):
         p = await async_playwright().__aenter__()
         logger.debug('Launching firefox...')
-        self.browser = await p.firefox.launch()
+        self.browser = await p.chromium.launch()
         self.page = await self.browser.new_page()
 
         logger.debug('Populating login form...')
@@ -138,8 +138,16 @@ class BCHydroApi2:
 
         logger.debug('Making fetch() request...')
 
-        evpBillingStart = await self.page.evaluate("window.g_billingStartDateTime.toXmlDate()")
-        evpBillingEnd = await self.page.evaluate("window.g_billingEndDateTime.toXmlDate()")
+        i = 0
+        while i < 3:
+            try:
+                evpBillingStart = await self.page.evaluate("window.g_billingStartDateTime.toXmlDate()")
+                evpBillingEnd = await self.page.evaluate("window.g_billingEndDateTime.toXmlDate()")
+                break
+            except Exception as e:
+                print(e)
+            await asyncio.sleep(1)
+            i += 1
         postdata = f'Slid={self.slid}&Account={self.accountNumber}&ChartType=column&Granularity=daily&Overlays=none&StartDateTime={evpBillingStart}&EndDateTime={evpBillingEnd}&DateRange=currentBill&RateGroup=RES1'
         eval_js = f"""
         async()=>{{
