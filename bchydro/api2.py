@@ -93,8 +93,6 @@ class BCHydroApi2:
         logger.debug('Extracting account numbers...')
         self.slid = await self.page.evaluate("window.input_slid")
         self.accountNumber = await self.page.evaluate("window.input_accountNumber")
-        print(self.accountNumber)
-        print(self.slid)
 
     @_authenticated
     async def get_accounts(self):
