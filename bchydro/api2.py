@@ -67,14 +67,18 @@ class BCHydroApi2:
     def _authenticated(func):
         async def wrapper(self, *args, **kwargs):
             # if not (self.slid and self.page):
-            await self.authenticate()
-            return await func(self, *args, **kwargs)
+            try:
+                context = async_playwright()
+                self.p = await self.context.__aenter__()
+                await self.authenticate()
+                return await func(self, *args, **kwargs)
+            finally:
+                await context.__aexit__()
         return wrapper
 
     async def authenticate(self):
-        p = await async_playwright().__aenter__()
         logger.debug('Launching firefox...')
-        self.browser = await p.chromium.launch()
+        self.browser = await self.p.chromium.launch()
         self.page = await self.browser.new_page()
 
         logger.debug('Populating login form...')
